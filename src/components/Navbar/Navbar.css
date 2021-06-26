@@ -1,0 +1,22 @@
+.navbar{
+    height: 15vh;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.logo img{
+    max-width: 100px;
+}
+
+.nav-items{
+    display: flex;
+}
+.nav-items li{
+    list-style: none;
+    padding: 10px 20px;
+}
+.nav-items a{
+    text-decoration: none;
+    color: black;
+}

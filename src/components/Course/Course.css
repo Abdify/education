@@ -1,0 +1,9 @@
+.course{
+    display: flex;
+    min-height: 85vh;
+}
+.course-main{
+    min-height: 100%;
+    width: 80vw;
+    
+}
