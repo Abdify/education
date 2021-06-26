@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { signUp } from "../../../api";
-import '../LogIn/LogIn.css';
+import "../LogIn/LogIn.css";
 const CreateAccount = () => {
     const history = useHistory();
     return (
@@ -17,72 +17,86 @@ const CreateAccount = () => {
     );
 
     function LogInForm() {
-        const [userName, setUserName] = useState("");
-        const [email, setEmail] = useState("");
-        const [password, setPassword] = useState("");
-        const [error, setError] = useState('');
+        const initialState = { userName: "", email: "", password: "", confirmPassword: "" };
+        const [user, setUser] = useState(initialState);
+        const [error, setError] = useState("");
+        const [loading, setLoading] = useState(false);
+
+        const handleChange = (e) => {
+            setUser({ ...user, [e.target.name]: e.target.value });
+        };
+
         return (
             <form onSubmit={handleLogIn} className="login-form">
+                {loading && (
+                    <div className="loading">
+                        <h1>Loading...</h1>
+                    </div>
+                )}
                 <FontAwesomeIcon icon={faUserLock} size="3x" color="white" />
                 {error && <p className="error-text">{error}</p>}
+
                 <input
-                    name="name"
+                    name="userName"
                     placeholder="What should I call you?"
                     required
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
+                    value={user.userName}
+                    onChange={handleChange}
                     onInvalid={(e) =>
-                        e.target.setCustomValidity(
-                            "Person without any name are not acceptable!"
-                        )
+                        e.target.setCustomValidity("Person without any name are not acceptable!")
                     }
                     onInput={(e) => e.target.setCustomValidity("")}
                 />
+
                 <input
                     type="email"
                     name="email"
                     placeholder="Email"
                     required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={user.email}
+                    onChange={handleChange}
                 />
                 <input
                     type="password"
                     name="password"
                     placeholder="Password"
                     required
-                    value={password}
+                    value={user.password}
                     pattern=".{6,}"
-                    onChange={(e) => setPassword(e.target.value)}
-                    onInvalid={(e) =>
-                        e.target.setCustomValidity(
-                            "Do you tell that a password!?"
-                        )
-                    }
+                    onChange={handleChange}
+                    onInvalid={(e) => e.target.setCustomValidity("Do you tell that a password!?")}
                     onInput={(e) => e.target.setCustomValidity("")}
+                />
+                <input
+                    type="password"
+                    name="confirmPassword"
+                    placeholder="Confirm Password"
+                    required
+                    value={user.confirmPassword}
+                    onChange={handleChange}
                 />
                 <button className="transparent-btn">Create</button>
             </form>
         );
 
-        function handleLogIn(e) {
+        async function handleLogIn(e) {
             e.preventDefault();
+            setLoading(true);
 
-            const user = {
-                userName,
-                email,
-                password,
-            };
-            
-            signUp(user)
-                .then((data) => {
-                    if (!data.success) {
-                        setError(data.message);
-                    } else {
-                        // Account created successfully
-                        history.push('/login');
-                    }
-                });
+            try {
+                const { data } = await signUp(user);
+                
+                if(!data.user){
+                    setError(data.message);
+                    setLoading(false);
+                    return;
+                }
+                history.push("/login");
+                
+            } catch (error) {
+                setError(error.message);
+                setLoading(false);
+            }
         }
     }
 };

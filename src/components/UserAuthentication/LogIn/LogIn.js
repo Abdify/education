@@ -22,11 +22,15 @@ const LogIn = () => {
     );
 
     function LogInForm() {
-        const [email, setEmail] = useState("demo@pb.com");
-        const [password, setPassword] = useState("demo password");
+        const initialState = { email: "", password: "" };
+        const [user, setUser] = useState(initialState);
         let history = useHistory();
         let location = useLocation();
-        let { from } = location.state || { from: { pathname: "/dashboard" } };
+        let { from } = location.state || { from: { pathname: "/" } };
+
+        const handleChange = (e) => {
+            setUser({ ...user, [e.target.name]: e.target.value });
+        };
         
         return (
             <form onSubmit={handleLogIn} className="login-form">
@@ -42,41 +46,40 @@ const LogIn = () => {
                     name="email"
                     placeholder="Email"
                     required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={user.email}
+                    onChange={handleChange}
                 />
                 <input
                     type="password"
                     name="password"
                     placeholder="Password"
                     required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={user.password}
+                    onChange={handleChange}
                 />
                 <button className="transparent-btn">Log in</button>
             </form>
         );
 
-        function handleLogIn(e) {
+        async function handleLogIn(e) {
             e.preventDefault();
             setLoading(true);
-            const user = {
-                email,
-                password,
-            };
 
-            logIn(user)
-                .then((data) => {
-                    // console.log(data);
-                    if (data.success) {
-                        localStorage.setItem("profile", data);
-                        setCurrentUser(data.user);
-                        history.replace(from);
-                    } else {
-                        setError(data.message);
-                        setLoading(false);
-                    }
-                });
+            try {
+                const { data } = await logIn(user);
+                
+                if (data.user) {
+                    localStorage.setItem("profile", JSON.stringify(data));
+                    setCurrentUser(data.user);
+                    history.replace(from);
+                } else {
+                    setError(data.message);
+                    setLoading(false);
+                }
+            } catch (error) {
+                setError("No user found! Create an account first.")
+                setLoading(false);
+            }
         }
     }
 };
