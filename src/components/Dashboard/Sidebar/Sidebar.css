@@ -1,0 +1,21 @@
+.sidebar{
+    background: rgba(255, 255, 255, 0.2);
+    min-height: 100vh;
+}
+
+.sidebar a{
+    color: #121416;
+}
+
+@media (max-width: 768px) {
+    .sidebar{
+        min-height: 200px;
+        height: 200px;
+    }
+    .sidebar-items{
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-start;
+    }
+}
