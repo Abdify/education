@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Switch } from "react-router-dom";
-import AddCourse from "../AddCourse/AddCourse";
+import AddExam from "../AddExam/AddExam";
 import AddQuestion from "../AddQuestion/AddQuestion";
 import AddReview from "../AddReview/AddReview";
 import EnrollCourse from '../EnrollCourse/EnrollCourse';
@@ -30,8 +30,8 @@ const Dashboard = () => {
                         <Route path="/dashboard/add-question">
                             <AddQuestion />
                         </Route>
-                        <Route path="/dashboard/add-course">
-                            <AddCourse />
+                        <Route path="/dashboard/add-exam">
+                            <AddExam />
                         </Route>
                         <Route path="/dashboard/make-admin">
                             <MakeAdmin />

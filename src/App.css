@@ -71,7 +71,12 @@ button:not(:disabled) {
 button{
   border: none;
   outline: none;
+}
+button:not(:disabled){
   cursor: pointer;
+}
+button:disabled{
+  cursor: not-allowed;
 }
 
 .transparent-btn{
@@ -87,7 +92,7 @@ button{
   cursor: pointer;
   transition: 0.5s all;
 }
-.transparent-btn:hover{
+.transparent-btn:not(:disabled):hover{
   background: white;
   color: black;
 }
@@ -98,6 +103,7 @@ button{
     margin: 1rem;
     padding: 1rem;
     text-align: center;
+    line-height: 21px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.2);
     color: white;

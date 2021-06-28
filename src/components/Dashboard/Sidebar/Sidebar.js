@@ -1,5 +1,4 @@
-import { faBitbucket } from '@fortawesome/free-brands-svg-icons';
-import { faHome, faPlus, faSignOutAlt, faStar, faUser, faUserEdit, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faPaperPlane, faPlus, faSignOutAlt, faStar, faUser, faUserEdit, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useContext } from 'react';
 import { Link, useHistory } from 'react-router-dom';
@@ -17,11 +16,11 @@ const Sidebar = () => {
                         <FontAwesomeIcon icon={faHome} /> Home
                     </Link>
                 </li>
-                <li>
+                {/* <li>
                     <Link to="/dashboard/enrolled-courses" className="nav-link">
                         <FontAwesomeIcon icon={faBitbucket} /> Enrolled Courses
                     </Link>
-                </li>
+                </li> */}
                 <li>
                     <Link to="/dashboard/add-question" className="nav-link">
                         <FontAwesomeIcon icon={faPlus} /> Add Question
@@ -30,8 +29,8 @@ const Sidebar = () => {
                 {currentUser.isAdmin ? (
                     <li>
                         <li>
-                            <Link to="/dashboard/add-course" className="nav-link">
-                                <FontAwesomeIcon icon={faPlus} /> Add Course
+                            <Link to="/dashboard/add-exam" className="nav-link">
+                                <FontAwesomeIcon icon={faPaperPlane} /> Start an Exam
                             </Link>
                         </li>
                         <li>

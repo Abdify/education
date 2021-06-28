@@ -1,93 +1,104 @@
-import { faArrowLeft, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faEraser, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
+import EquationEditor from "equation-editor-react";
 import React, { useContext, useState } from 'react';
-import { useHistory } from "react-router";
 import { addQuestion } from "../../../api";
 import { userAuthContext } from "../../../App";
 
 const QuestionInfoForm = ({source, setSourceFound}) => {
     const [currentUser, setCurrentUser] = useContext(userAuthContext);
-    const history = useHistory();
 
-    const [questionInfo, setQuestionInfo] = useState({question: "", answer: "", imageLink: ""});
-    const [imageLoaded, setImageLoaded] = useState("");
+    const [questionInfo, setQuestionInfo] = useState({answer: "", imageLink: ""});
+    const [question, setQuestion] = useState("");
+    const [message, setMessage] = useState("");
 
     const handleChange = (e) => {
         setQuestionInfo({...questionInfo, [e.target.name]: e.target.value});
     }
+    const clear = () => {
+        setQuestion("");
+        setQuestionInfo({answer: "", imageLink: ""});
+        setMessage("");
+    }
+
 
     return (
         <form onSubmit={handleAddQuestion} className="add-question-form">
             <div className="arrow-btn-3" onClick={() => setSourceFound(false)}>
                 <FontAwesomeIcon icon={faArrowLeft} />
             </div>
-            <div>
+
+            <div className="question-editor">
                 <small>Question</small>
-                <textarea
-                    name="question"
-                    placeholder={`Use markdown syntax to format your text. e. g. 
-                        # heading 1
-                        ## heading 2
-                        **Bold**
-                        *Italic*
-                        [Link](http://a.com)
-                        `}
-                    required
-                    value={questionInfo.question}
-                    onChange={handleChange}
-                ></textarea>
+                <EquationEditor
+                    value={question}
+                    onChange={setQuestion}
+                    autoCommands="pi theta sqrt sum prod alpha beta gamma rho vec bar int"
+                    autoOperatorNames="sin cos tan"
+                />
             </div>
+
             <div>
                 <small>Answer of the question</small>
-                <input name="answer" placeholder="Enter Answer" required value={questionInfo.answer} onChange={handleChange} />
+                <input
+                    name="answer"
+                    placeholder="Enter Answer"
+                    required
+                    value={questionInfo.answer}
+                    onChange={handleChange}
+                />
             </div>
             <div>
                 <small>If any photo needed for this question</small>
-                <input type="file" onChange={getPhotoLink} />
-                {imageLoaded && <p>{imageLoaded}</p>}
+                <input type="file" required onChange={getImageLink} />
             </div>
-            <button className="btn transparent-btn" disabled={!questionInfo.imageLink}>
-                <FontAwesomeIcon icon={faPlus} size="lg" />
-            </button>
+            <div className="submit-btns">
+                <button className="btn transparent-btn btn-dark" type="submit" disabled={!(questionInfo.imageLink && question)}>
+                    <FontAwesomeIcon icon={faPlus} size="lg" />
+                </button>
+                <button className="btn transparent-btn btn-danger" type="reset" onClick={clear}>
+                    <FontAwesomeIcon icon={faEraser} size="lg" />
+                </button>
+            </div>
+            <h3>{message && message}</h3>
         </form>
     );
 
 
     async function handleAddQuestion(e) {
         e.preventDefault();
-        if (questionInfo.imageLink) {
+        if (questionInfo.imageLink.length) {
             const newQuestion = {
                 addedBy: currentUser,
-                addedAt: new Date().getTime(),
                 source: source,
-                question: questionInfo.question,
+                question,
                 answer: questionInfo.answer,
                 imageLink: questionInfo.imageLink,
             };
-            console.log(newQuestion);
-
+            console.log(newQuestion)
             try {
                 const {data} = await addQuestion(newQuestion)
-                if (data) {
+                if (data._id) {
                     console.log(data);
-                    history.push("/");
+                    setMessage("Added your question successfully!");
                 } else {
-                    alert("Something went wrong, please try again!");
+                    setMessage("Something went wrong, please try again!");
                 }
             } catch (error) {
-                
+                setMessage(error.message);
             }
         } else {
-            alert("Photo was not uploaded! Please wait");
+            setMessage("Photo was not uploaded! Please wait");
         }
     }
 
-    function getPhotoLink(e) {
+    function getImageLink(e) {
         const imageData = new FormData();
 
         imageData.set("key", "944474bba0b71f9545ba1025a047dc94");
         imageData.append("image", e.target.files[0]);
+
         axios
             .post("https://api.imgbb.com/1/upload", imageData)
             .then((response) => {

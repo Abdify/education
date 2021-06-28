@@ -1,0 +1,17 @@
+.question-card{
+    width: 30%;
+    height: fit-content;
+    padding: 1rem;
+    margin: 1rem;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+.question-card > div{
+    margin-top: 10px;
+}
+.question-card img{
+    max-width: 90%;
+    margin: 10px auto;
+    display: block;
+    border-radius: 10px;
+}

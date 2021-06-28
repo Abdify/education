@@ -5,7 +5,7 @@ import React, { useContext, useRef, useState } from 'react';
 import { useHistory } from 'react-router';
 import { userAuthContext } from '../../../App';
 
-const AddCourse = () => {
+const AddExam = () => {
     const [coverPhotoLink, setCoverPhotoLink] = useState("");
     const courseNameRef = useRef();
     const coursePriceRef = useRef();
@@ -99,4 +99,4 @@ const AddCourse = () => {
     }
 };
 
-export default AddCourse;
+export default AddExam;
