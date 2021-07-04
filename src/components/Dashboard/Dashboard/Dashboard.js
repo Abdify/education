@@ -7,6 +7,7 @@ import EnrollCourse from '../EnrollCourse/EnrollCourse';
 import MakeAdmin from "../MakeAdmin/MakeAdmin";
 import ManageCourses from "../ManageCourses/ManageCourses";
 import Sidebar from "../Sidebar/Sidebar";
+import Status from "../Status/Status";
 
 const Dashboard = () => {
     return (
@@ -26,6 +27,9 @@ const Dashboard = () => {
                         </Route>
                         <Route path="/dashboard/enroll/:courseId">
                             <EnrollCourse />
+                        </Route>
+                        <Route path="/dashboard/status">
+                            <Status />
                         </Route>
                         <Route path="/dashboard/add-question">
                             <AddQuestion />

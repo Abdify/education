@@ -42,3 +42,8 @@
     margin: 1rem;
 }
 
+.question-preview > div{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { addStyles } from "react-mathquill";
-import { getCurrentUserQuestions } from "../../../api";
+import { getChapters, getClasses, getCurrentUserQuestions, getSubjects, getTopics } from "../../../api";
 import { userAuthContext } from "../../../App";
 import QuestionCard from "../QuestionCard/QuestionCard";
 import "./AddQuestion.css";
@@ -11,7 +11,7 @@ addStyles();
 const AddQuestion = () => {
     const [currentUser, setCurrentUser] = useContext(userAuthContext);
 
-    const initialState = {
+    const initialSourceState = {
         class: "",
         subject: "",
         chapter: "",
@@ -20,7 +20,7 @@ const AddQuestion = () => {
     };
 
     const [sourceFound, setSourceFound] = useState(false);
-    const [source, setSource] = useState(initialState);
+    const [source, setSource] = useState(initialSourceState);
     const [userQuestions, setUserQuestions] = useState({});
 
     useEffect(() => {
@@ -33,9 +33,8 @@ const AddQuestion = () => {
             }
         }
         getQuestions();
-    }, [])
-
-    console.log(userQuestions)
+    }, []);
+    console.log(userQuestions);
     return (
         <div>
             <h2 className="title-text-2">Add Question</h2>
@@ -50,10 +49,10 @@ const AddQuestion = () => {
             )}
             <div className="mt-5 question-preview">
                 <h1>Your Questions</h1>
-                {userQuestions.length &&
-                    userQuestions.map((question) => (
-                        <QuestionCard question={question} />
-                    ))}
+                <div>
+                    {userQuestions.length &&
+                        userQuestions.map((question) => <QuestionCard question={question} />)}
+                </div>
             </div>
         </div>
     );
@@ -62,10 +61,44 @@ const AddQuestion = () => {
 
 
 function QuestionSourceForm({ source, setSource, setSourceFound}){
+        const foundSourcesState = {
+            classes: [],
+            subjects: [],
+            chapters: [],
+            topics: [],
+        };
+    const [foundSource, setFoundSource] = useState(foundSourcesState);
 
-
+    useEffect(() => {
+        
+        const get = async (thing) => {
+            try {
+                const { data } =
+                    thing === "classes"
+                        ? await getClasses()
+                        : thing === "subjects"
+                        ? await getSubjects(source.class)
+                        : thing === "chapters"
+                        ? await getChapters(source.subject)
+                        : thing === "topics"
+                        ? await getTopics(source.chapter)
+                        : {};
+                setFoundSource({ ...foundSource, [thing]: data });
+            } catch (error) {
+                console.log(error.message);
+            }
+        };
+        
+        !foundSource.classes.length && get("classes");
+        source.class && get("subjects");
+        source.subject && get("chapters");
+        source.chapter && get("topics");
+    }, [source]);
+    console.log(foundSource, source.class)
+    
     const handleChange = (e) => {
-        setSource({...source, [e.target.name]: e.target.value})
+        setSource({...source, [e.target.name]: e.target.value});
+        
     }
 
     const handleSubmit = (e) => {
@@ -75,31 +108,39 @@ function QuestionSourceForm({ source, setSource, setSourceFound}){
 
     return (
         <form onSubmit={handleSubmit} className="question-source-form">
-            <select name="class" value={source.class} onChange={handleChange} >
+            <select name="class" value={source.class} onChange={handleChange} required>
                 <option value="" selected disabled>
                     Select Class
                 </option>
-                <option value="hsc">HSC</option>
+                {foundSource.classes.map((cls) => (
+                    <option value={cls.classId}>{cls.name}</option>
+                ))}
             </select>
-            <select name="subject" value={source.subject} onChange={handleChange} >
+            <select name="subject" value={source.subject} onChange={handleChange} required>
                 <option value="" selected disabled>
                     Select Subject
                 </option>
-                <option value="math1">Mathematics 1st Paper</option>
+                {foundSource.subjects.map((sub) => (
+                    <option value={sub.subjectId}>{sub.name}</option>
+                ))}
             </select>
-            <select name="chapter" value={source.chapter} onChange={handleChange} >
+            <select name="chapter" value={source.chapter} onChange={handleChange} required>
                 <option value="" selected disabled>
                     Select Chapter
                 </option>
-                <option value="circle">Circle</option>
+                {foundSource.chapters.map((chap) => (
+                    <option value={chap.chapterId}>{chap.name}</option>
+                ))}
             </select>
-            <select name="topic" value={source.topic} onChange={handleChange} >
+            <select name="topic" value={source.topic} onChange={handleChange} required>
                 <option value="" selected disabled>
                     Select Topic
                 </option>
-                <option value="equation-of-circle">Equation of A Circle</option>
+                {foundSource.topics.map((topic) => (
+                    <option value={topic.topicId}>{topic.name}</option>
+                ))}
             </select>
-            <select name="type" value={source.type} onChange={handleChange} >
+            <select name="type" value={source.type} onChange={handleChange} required>
                 <option value="" selected disabled>
                     Select Type
                 </option>

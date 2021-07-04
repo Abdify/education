@@ -1,4 +1,4 @@
-import { faHome, faPaperPlane, faPlus, faSignOutAlt, faStar, faUser, faUserEdit, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faPaperPlane, faPlus, faSign, faSignOutAlt, faStar, faUser, faUserEdit, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useContext } from 'react';
 import { Link, useHistory } from 'react-router-dom';
@@ -28,6 +28,11 @@ const Sidebar = () => {
                 </li>
                 {currentUser.isAdmin ? (
                     <li>
+                        <li>
+                            <Link to="/dashboard/status" className="nav-link">
+                                <FontAwesomeIcon icon={faSign} /> Status
+                            </Link>
+                        </li>
                         <li>
                             <Link to="/dashboard/add-exam" className="nav-link">
                                 <FontAwesomeIcon icon={faPaperPlane} /> Start an Exam

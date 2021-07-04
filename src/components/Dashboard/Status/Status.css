@@ -1,0 +1,14 @@
+.status{
+    display: flex;
+}
+.status > *{
+    margin: 1rem;
+}
+.class-status{
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+}
+.topic-questions{
+    width: 100%;
+}

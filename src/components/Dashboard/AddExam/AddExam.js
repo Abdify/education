@@ -16,7 +16,7 @@ const AddExam = () => {
 
     return (
         <div>
-            <h2>Add Course</h2>
+            <h2 className="title-text-2">Start an Exam</h2>
             <form onSubmit={handleAddCourse}>
                 <div>
                     <small>Course Name</small>

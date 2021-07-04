@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Redirect, Route } from "react-router";
-import { logIn } from "../../api";
+import { getUser } from "../../api";
 import { userAuthContext } from "../../App";
 
 const PrivateRoute = ({ children, ...rest }) => {
@@ -11,7 +11,7 @@ const PrivateRoute = ({ children, ...rest }) => {
         try {
             const { user } = JSON.parse(localStorage.getItem("profile"));
             
-            logIn({email: user.email, password: user.password})
+            getUser()
             .then(({data}) => {
                 if(data.user) setCurrentUser(data.user);
                 setLoading(false);
