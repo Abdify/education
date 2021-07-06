@@ -7,6 +7,7 @@ import Home from './components/Home/Home';
 import Learn from './components/Learn/Learn';
 import Navbar from './components/Navbar/Navbar';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
+import SearchEq from './components/SearchEq/SearchEq';
 import CreateAccount from './components/UserAuthentication/CreateAccount/CreateAccount';
 import LogIn from './components/UserAuthentication/LogIn/LogIn';
 
@@ -26,6 +27,9 @@ function App() {
           </Route>
           <Route path="/learn">
             <Learn />
+          </Route>
+          <Route path="/search">
+            <SearchEq />
           </Route>
           <PrivateRoute path="/dashboard">
             <Dashboard />

@@ -34,3 +34,6 @@ export const addChapter = (newChapter) => API.post('/chapters', newChapter);
 
 export const getTopics = (id="") => API.get(`/topics?chapterId=${id}`);
 export const addTopic = (newTopic) => API.post('/topics', newTopic);
+
+export const searchEq = (url) => API.get(`/searchEq?url=${url}`);
+export const searchEq2 = (url) => API.post(`/searchEq`, url);

@@ -1,52 +1,38 @@
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
+import { getChapters, getClasses, getSubjects, getTopics } from '../../../api';
 import { userAuthContext } from '../../../App';
 
 const AddExam = () => {
     const [coverPhotoLink, setCoverPhotoLink] = useState("");
-    const courseNameRef = useRef();
-    const coursePriceRef = useRef();
-    const courseDescriptionRef = useRef();
+
     const [currentUser, setCurrentUser] = useContext(userAuthContext);
     const history = useHistory();
     const [imageLoaded, setImageLoaded] = useState("");
+    const initialSourceState = {
+        class: "",
+        subject: "",
+        chapter: "",
+        topic: "",
+        type: "",
+    };
 
+    const [sourceFound, setSourceFound] = useState(false);
+    const [source, setSource] = useState(initialSourceState);
+    const [infoFound, setInfoFound] = useState(false);
+    const [userQuestions, setUserQuestions] = useState({});
     return (
         <div>
             <h2 className="title-text-2">Start an Exam</h2>
-            <form onSubmit={handleAddCourse}>
-                <div>
-                    <small>Course Name</small>
-                    <input type="text" placeholder="Enter Name" required ref={courseNameRef} />
-                </div>
-                <div>
-                    <small>Course Price</small>
-                    <input type="number" placeholder="Enter Price" required ref={coursePriceRef} />
-                </div>
-                <div>
-                    <small>Description</small>
-                    <textarea
-                        cols="30"
-                        rows="10"
-                        placeholder="Enter Description"
-                        required
-                        ref={courseDescriptionRef}
-                    ></textarea>
-                </div>
-                <div>
-                    <small>Add Course Cover Photo</small>
-                    <input type="file" required onChange={getPhotoLink} />
-                    {
-                        imageLoaded && <p>{imageLoaded}</p>
-                    }
-                </div>
-                <button className="btn btn-brand" disabled={coverPhotoLink ? false : true} >
-                    <FontAwesomeIcon icon={faPlus} size="lg" />
-                </button>
-            </form>
+
+            { 
+                infoFound ? 
+                <QuestionSourceForm source={source} setSource={setSource} setSourceFound={setSourceFound} />:
+                <ExamInfo setInfoFound={setInfoFound} />
+            }
+
+            <form onSubmit={handleAddCourse}></form>
         </div>
     );
 
@@ -54,10 +40,6 @@ const AddExam = () => {
         e.preventDefault();
         if (coverPhotoLink) {
             const newCourse = {
-                email: currentUser.email,
-                name: courseNameRef.current.value,
-                price: coursePriceRef.current.value,
-                description: courseDescriptionRef.current.value,
                 coverPhotoLink,
             };
             console.log(newCourse);
@@ -98,5 +80,119 @@ const AddExam = () => {
             });
     }
 };
+
+function ExamInfo({setInfoFound}){
+    const [examInfo, setExamInfo] = useState({
+        marks: "",
+        startTime: "",
+        endTime: "",
+        date: "",
+    });
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setInfoFound(true);
+    };
+    const handleChange = (e) => {
+        setExamInfo({...examInfo, [e.target.name]: e.target.value});
+        console.log(examInfo)
+    }
+    return (
+        <form onSubmit={handleSubmit}>
+            <input name="marks" placeholder="Total Marks" required value={examInfo.marks} onChange={handleChange} />
+            <input name="startTime" placeholder="Start Time" type="time" required value={examInfo.time} onChange={handleChange} />
+            <input name="endTime" placeholder="End Time" type="time" required value={examInfo.duration} onChange={handleChange} />
+            <input name="date" type="date" required value={examInfo.date} onChange={handleChange} />
+            <button className="btn btn-dark">Submit</button>
+        </form>
+    );
+}
+
+function QuestionSourceForm({ source, setSource, setSourceFound }) {
+    const foundSourcesState = {
+        classes: [],
+        subjects: [],
+        chapters: [],
+        topics: [],
+    };
+    const [foundSource, setFoundSource] = useState(foundSourcesState);
+
+    useEffect(() => {
+        const get = async (thing) => {
+            try {
+                const { data } =
+                    thing === "classes"
+                        ? await getClasses()
+                        : thing === "subjects"
+                        ? await getSubjects(source.class)
+                        : thing === "chapters"
+                        ? await getChapters(source.subject)
+                        : thing === "topics"
+                        ? await getTopics(source.chapter)
+                        : {};
+                setFoundSource({ ...foundSource, [thing]: data });
+            } catch (error) {
+                console.log(error.message);
+            }
+        };
+
+        !foundSource.classes.length && get("classes");
+        source.class && get("subjects");
+        source.subject && get("chapters");
+        source.chapter && get("topics");
+    }, [source]);
+    console.log(foundSource, source.class);
+
+    const handleChange = (e) => {
+        setSource({ ...source, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setSourceFound(true);
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="question-source-form">
+            
+            <select name="class" value={source.class} onChange={handleChange} required>
+                <option value="" selected disabled>
+                    Select Class
+                </option>
+                {foundSource.classes.map((cls) => (
+                    <option value={cls.classId}>{cls.name}</option>
+                ))}
+            </select>
+            <select name="subject" value={source.subject} onChange={handleChange} required>
+                <option value="" selected disabled>
+                    Select Subject
+                </option>
+                {foundSource.subjects.map((sub) => (
+                    <option value={sub.subjectId}>{sub.name}</option>
+                ))}
+            </select>
+            <select name="chapter" value={source.chapter} onChange={handleChange} required>
+                <option value="" selected disabled>
+                    Select Chapter
+                </option>
+                {foundSource.chapters.map((chap) => (
+                    <option value={chap.chapterId}>{chap.name}</option>
+                ))}
+            </select>
+            <select name="topic" value={source.topic} onChange={handleChange} required>
+                <option value="" selected disabled>
+                    Select Topic
+                </option>
+                {foundSource.topics.map((topic) => (
+                    <option value={topic.topicId}>{topic.name}</option>
+                ))}
+            </select>
+            <br/>
+            <button className="btn btn-dark">Submit</button>
+        </form>
+    );
+}
+
+
+
 
 export default AddExam;

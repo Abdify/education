@@ -54,7 +54,7 @@ const QuestionInfoForm = ({source, setSourceFound}) => {
                                 <EquationEditor
                                     value={text.slice(start + 2, end - 2)}
 
-                                    autoCommands="pi theta sqrt sum prod alpha beta gamma rho vec bar int"
+                                    autoCommands="pi theta sqrt sum prod alpha beta gamma rho vec bar"
                                     autoOperatorNames="sin cos tan"
                                 />
                                 {text.slice(end, next)}
@@ -79,8 +79,8 @@ const QuestionInfoForm = ({source, setSourceFound}) => {
                 <EquationEditor
                     value={question}
                     onChange={setQuestion}
-                    autoCommands="pi theta sqrt sum prod alpha beta gamma rho vec bar int"
-                    autoOperatorNames="sin cos tan"
+                    autoCommands="pi theta sqrt sum prod alpha beta gamma rho vec bar"
+                    autoOperatorNames="sin cos"
                 />
             </div>
 
@@ -101,13 +101,13 @@ const QuestionInfoForm = ({source, setSourceFound}) => {
             </div>
             <div>
                 <small>If any photo needed for this question</small>
-                <input type="file" required onChange={getImageLink} />
+                <input type="file" onChange={getImageLink} />
             </div>
             <div className="submit-btns">
                 <button
                     className="btn transparent-btn btn-dark"
                     type="submit"
-                    disabled={!(questionInfo.imageLink && question)}
+                    disabled={!(question && questionInfo.answer)} //questionInfo.imageLink && question
                 >
                     <FontAwesomeIcon icon={faPlus} size="lg" />
                 </button>
@@ -122,7 +122,7 @@ const QuestionInfoForm = ({source, setSourceFound}) => {
 
     async function handleAddQuestion(e) {
         e.preventDefault();
-        if (questionInfo.imageLink.length) {
+        if (true) { //questionInfo.imageLink.length
             const newQuestion = {
                 addedBy: currentUser,
                 source: source,

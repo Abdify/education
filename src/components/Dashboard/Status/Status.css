@@ -4,6 +4,9 @@
 .status > *{
     margin: 1rem;
 }
+.status li{
+    list-style: none;
+}
 .class-status{
     display: flex;
     flex-direction: column;
@@ -11,4 +14,7 @@
 }
 .topic-questions{
     width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
 }

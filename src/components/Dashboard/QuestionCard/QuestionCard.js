@@ -9,33 +9,38 @@ import './QuestionCard.css';
 
 const QuestionCard = ({question}) => {
     const ref = React.createRef();
-    
+    const re = /\\\\ (?!.*\))|(?!\([\w\s\\_^+*/-]*)\\\\ (?![\w\s\\_^+*/-]*\))/;
+    const re2 = /\n/;
     return (
         <div className="question-card" ref={ref}>
-            <div>
-                <small>Question:</small>
-                <p className="question-lines">
-                    {question.question.split("\\ ").map((word) => (
-                        <StaticMathField>{word}</StaticMathField>
-                    ))}
-                </p>
-
-                <img src={question.imageLink} alt="" />
-            </div>
-            <small>
-                {" "}
-                <FontAwesomeIcon icon={faClock} /> {Date(question.addedAt).slice(0, 21)}
-            </small>
-            <div>
-                <small>Answer:</small>
-                <p>{question.answer}</p>
-            </div>
+            <small>Question:</small>
+            <p className="question-lines">
+                {question.question.split(re2).map((word) => (
+                    <StaticMathField>{word}</StaticMathField>
+                ))}
+            </p>
 
             <div>
-                <ReactToPdf targetRef={ref} filename="div-blue.pdf">
-                    {({ toPdf }) => <button className="btn-dark" onClick={toPdf}>Generate pdf</button>}
-                </ReactToPdf>
-                
+                {question.imageLink && <img src={question.imageLink} alt="" />}
+                <div>
+                    <small>
+                        <FontAwesomeIcon icon={faClock} /> {Date(question.addedAt).slice(0, 21)}
+                    </small>
+                    <div>
+                        <small>Answer:</small>
+                        <p>{question.answer}</p>
+                    </div>
+
+                    <div>
+                        <ReactToPdf targetRef={ref} filename="div-blue.pdf">
+                            {({ toPdf }) => (
+                                <button className="btn-dark" onClick={toPdf}>
+                                    Generate pdf
+                                </button>
+                            )}
+                        </ReactToPdf>
+                    </div>
+                </div>
             </div>
         </div>
     );

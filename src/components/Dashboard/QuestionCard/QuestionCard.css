@@ -1,17 +1,26 @@
 .question-card{
-    width: 30%;
+    width: 45%;
     height: fit-content;
+    min-height: 300px;
     padding: 1rem;
     margin: 1rem;
     background-color: rgba(255, 255, 255, 0.3);
     border-radius: 10px;
     
+    overflow-x: scroll;
+    scrollbar-color: transparent transparent;
 }
+.question-card::-webkit-scrollbar {
+    background-color: transparent;
+}
+
 .question-card > div{
     margin-top: 10px;
+    display: flex;
+    align-items: center;
 }
 .question-card img{
-    max-width: 90%;
+    max-height: 150px;
     margin: 10px auto;
     display: block;
     border-radius: 10px;
