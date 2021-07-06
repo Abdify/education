@@ -30,3 +30,22 @@
     margin: 1rem auto;
     padding: 10px;
 }
+.eq-search-result button *{
+    cursor: pointer;
+}
+
+
+@media (max-width: 768px) {
+    .eq-search{
+        width: 95%;
+    }
+    .eq-search-result button{
+        width: 95%;
+        overflow-x: scroll;
+        scrollbar-color: transparent transparent;
+    }
+    .eq-search-result::-webkit-scrollbar {
+        background-color: transparent;
+    }
+
+}
